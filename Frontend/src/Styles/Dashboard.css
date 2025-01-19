@@ -17,7 +17,7 @@
     display: flex;
     position: sticky;
     gap: 0px;
-    opacity: 0px;
+    opacity: 1px;
     background-color: white;
     justify-content: space-between;
     align-items: center;

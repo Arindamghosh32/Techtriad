@@ -14,12 +14,12 @@ const { timeStamp } = require('console');
 require('./config/mongoose-connection');
 
 const server = http.createServer(app);//change
-const io = new Server(server,{//change
-    cors:{//change
-        origin: 'http://localhost:3000',//change
-        methods:['GET','POST'],//change
-        credentials: true//change
-    }//change
+const io = new Server(server,{
+    cors:{
+        origin: ['http://localhost:3000', 'https://your-vercel-app-name.vercel.app'],
+        methods:['GET','POST'],
+        credentials: true
+    }
 });//change
 
 // Add debugging logs
