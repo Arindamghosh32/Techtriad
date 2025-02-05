@@ -22,34 +22,56 @@ export default function Loginform() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/login', formData, {
+            const response = await axios.post('/auth/login', formData, {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true,
             });
-            if (response.data.message === "User Logged in successfully") {
-                navigate(formData.role === 'vendor' ? '/vendor-dashboard' : '/buyer-dashboard');
+            
+            if (response.data.success) {
+                // Store token in localStorage
+                localStorage.setItem('token', response.data.token);
+                // Store user info
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                // Navigate based on role from server response
+                navigate(response.data.user.role === 'vendor' ? '/vendor-dashboard' : '/buyer-dashboard');
             }
             setMessage(response.data.message);
         } catch (err) {
             console.error('Error:', err);
-            setMessage(err.response?.data || 'An error occurred');
+            setMessage(err.response?.data?.message || 'An error occurred');
         }
     };
 
     const handleGoogleSuccess = async (response) => {
         try {
+            if (!response.credential) {
+                setMessage('Failed to get credentials from Google');
+                return;
+            }
+
             const result = await axios.post('/auth/google', {
                 token: response.credential,
+                role: formData.role // Send selected role with Google login
+            }, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
+            
             if (result.data.success) {
-                const role = result.data.userRole; // Assume backend sends the role.
-                navigate(role === 'vendor' ? '/vendor-dashboard' : '/buyer-dashboard');
+                // Store token in localStorage
+                localStorage.setItem('token', result.data.token);
+                // Store user info
+                localStorage.setItem('user', JSON.stringify(result.data.user));
+                // Navigate based on role from server response
+                navigate(result.data.user.role === 'vendor' ? '/vendor-dashboard' : '/buyer-dashboard');
             } else {
-                setMessage('Google Login failed');
+                setMessage(result.data.message || 'Login failed');
             }
         } catch (error) {
-            console.error('Error:', error);
-            setMessage('An error occurred during Google Login');
+            console.error('Login error:', error.response?.data || error.message);
+            setMessage(error.response?.data?.message || 'An error occurred during login');
         }
     };
 
@@ -58,6 +80,9 @@ export default function Loginform() {
             window.google.accounts.id.initialize({
                 client_id: '1086789625522-fn4npbf8qr99ggilrgikol4f5sukno94.apps.googleusercontent.com',
                 callback: handleGoogleSuccess,
+                auto_select: false,
+                cancel_on_tap_outside: true,
+                ux_mode: 'popup'
             });
             window.google.accounts.id.renderButton(
                 document.getElementById('google-signin'),

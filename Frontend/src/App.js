@@ -6,6 +6,7 @@ import Register from './Pages/Register';
 import Buyerdash from "./Pages/Buyerdash";
 import Vendordash from "./Pages/Vendordash";
 import Chatbox from "./Pages/Chatbox";
+import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
   return (
@@ -14,9 +15,9 @@ function App() {
       <Route path='/' element={<Dashboard />}/>
       <Route path='/home' element={<Home/>}/>
       <Route path='/register' element={<Register />}/>
-      <Route path='/vendor-dashboard' element={<Vendordash/>}/>
-      <Route path='/buyer-dashboard' element={<Buyerdash/>}/>
-      <Route path='/Chatbox' element={<Chatbox/>}/>
+      <Route path='/vendor-dashboard' element={<ProtectedRoute><Vendordash/></ProtectedRoute>}/>
+      <Route path='/buyer-dashboard' element={<ProtectedRoute><Buyerdash/></ProtectedRoute>}/>
+      <Route path='/Chatbox' element={<ProtectedRoute><Chatbox/></ProtectedRoute>}/>
       
     </Routes>
   );

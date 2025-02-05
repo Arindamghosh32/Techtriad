@@ -7,7 +7,8 @@ const userSchema = mongoose.Schema({
     password: String,
     role: { type: String, enum: ['vendor', 'buyer'], default: 'buyer' },
     address: String, 
-    organization: String, 
+    organization: String,
+    publicKey: { type: String, default: null }, // Added for encrypted chat
     notifications: [
         {
             type: { type: String },
@@ -18,4 +19,4 @@ const userSchema = mongoose.Schema({
     ],
 });
 
-module.exports = mongoose.model("user",userSchema);
+module.exports = mongoose.model("user", userSchema);
